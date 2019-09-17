@@ -40,6 +40,11 @@ class TrainAPI {
     // ).toList();
   }
 
+  static Future<List<Station>> fetchStations() async {
+    final String response = await rootBundle.loadString('assets/stations.json');
+    final Map<String, dynamic> responseJson = jsonDecode(response);
+
+  }
 
 
   static List<dynamic> _extractRawTrains(Map<String, dynamic> json) {

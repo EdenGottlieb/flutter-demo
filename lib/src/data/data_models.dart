@@ -1,4 +1,6 @@
 import 'package:flutter/foundation.dart';
+import 'package:intl/intl.dart';
+import '../api/constants.dart';
 
 class Train {
   Train({
@@ -15,13 +17,14 @@ class Train {
     id = dto['Trainno'];
     origin = dto['OrignStation'];
     destination = dto['DestinationStation'];
-    arrival = dto['ArrivalTime'];
-    departure = dto['DepartureTime'];
+    arrival = DateFormat(apiDateFormat).parse(dto['ArrivalTime']);
+    departure = DateFormat(apiDateFormat).parse(dto['DepartureTime']);
     arrivalPlatform = int.parse(dto['DestPlatform']);
     departurePlatform = int.parse(dto['Platform']);
   }
 
-  String id, origin, destination, arrival, departure;
+  String id, origin, destination;
+  DateTime arrival, departure;
   int arrivalPlatform, departurePlatform;
 
   String get departurePlatformString {
@@ -30,6 +33,14 @@ class Train {
 
   String get arrivalPlatformString {
     return departurePlatform > 0 ? departurePlatform.toString() : 'Unknown';
+  }
+
+  String get departureTime {
+    return DateFormat('HH:mm').format(departure);
+  }
+
+  String get arrivalTime {
+    return DateFormat('HH:mm').format(arrival);
   }
 }
 
@@ -43,4 +54,14 @@ class TrainRoute {
   bool get isDirect {
     return trains.length == 1;
   }
+}
+
+class Station {
+  Station({
+    @required this.id,
+    @required this.name
+  });
+
+  final String id;
+  final String name;
 }

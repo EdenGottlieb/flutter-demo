@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import './src/api/index.dart';
 import './src/data/data_models.dart';
+import './src/components/route_card.dart';
 
 void main() => runApp(MyApp());
 
@@ -27,6 +28,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  List<TrainRoute> routes = <TrainRoute>[];
 
   void _incrementCounter() {
     setState(() {
@@ -41,24 +43,27 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    TrainAPI.fetchRoutes(origin: '5200', destination: '3600').then((List<List<Train>> result) => print(result.toString()));
+    TrainAPI.fetchRoutes(origin: '5200', destination: '3600').then((List<TrainRoute> result) {
+      setState(() {
+        routes = result;
+      });
+    });
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
+      body: SingleChildScrollView(
+        child: Container (
+          margin: EdgeInsets.fromLTRB(0, 40, 0, 0),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                ...routes.map<RouteCard>((TrainRoute route) => RouteCard(route: route,))
+              ],
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.display1,
-            ),
-          ],
-        ),
+          )
+        )
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
