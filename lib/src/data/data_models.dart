@@ -12,7 +12,6 @@ class Train {
   });
 
   Train.fromDto(Map<String, dynamic> dto) {
-    print(dto.toString());
     id = dto['Trainno'];
     origin = dto['OrignStation'];
     destination = dto['DestinationStation'];
@@ -31,5 +30,17 @@ class Train {
 
   String get arrivalPlatformString {
     return departurePlatform > 0 ? departurePlatform.toString() : 'Unknown';
+  }
+}
+
+class TrainRoute {
+  TrainRoute({
+    @required this.trains
+  });
+
+  final List<Train> trains;
+
+  bool get isDirect {
+    return trains.length == 1;
   }
 }
