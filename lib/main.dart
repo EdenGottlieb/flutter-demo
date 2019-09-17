@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import './src/api/index.dart';
 import './src/components/route_card.dart';
-import './src/components/choose_station.dart';
+import './src/components/station_picker.dart';
 import './src/data/data_models.dart';
 
 void main() => runApp(MyApp());

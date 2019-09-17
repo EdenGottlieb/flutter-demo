@@ -33,11 +33,6 @@ class TrainAPI {
         ).toList()
       )
     ).toList();
-    // return rawTrains.map<List<Train>>(
-    //   (dynamic dtoRoute) => dtoRoute.map<Train>(
-    //     (dynamic dtoTrain) => Train.fromDto(dtoTrain)
-    //   ).toList()
-    // ).toList();
   }
 
   static Future<List<Station>> fetchStations() async {
