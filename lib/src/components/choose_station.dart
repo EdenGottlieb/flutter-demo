@@ -4,14 +4,14 @@ import '../data/data_models.dart';
 typedef OnStationPicked = void Function(Station station);
 
 class StationPicker extends StatelessWidget {
-  const StationPicker({
+  StationPicker({
     @required this.stationsList,
-    @required this.initialStation,
+    @required this.selectedStation,
     @required this.onStationPicked
   });
 
   final List<Station> stationsList;
-  final Station initialStation;
+  Station selectedStation;
   final OnStationPicked onStationPicked;
 
   @override
@@ -22,7 +22,17 @@ class StationPicker extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-          ],
+            DropdownButton<String>(
+              value: selectedStation.id,
+              items: stationsList.map((Station station) =>
+                DropdownMenuItem<String>(
+                  value: station.id,
+                  child: Text(station.name)
+                )
+              ).toList(),
+              onChanged: (String stationId) => onStationPicked(stationsList.firstWhere((Station s) => s.id == stationId))
+            ),
+          ]
         ),
       )
     );

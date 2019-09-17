@@ -21,10 +21,10 @@ class TrainAPI {
       'hours': numberOfHoursToFetch.toString()
     };
     final Uri url = Uri.https(serverUrl, schedulePath, requestParams);
-    // final http.Response response = await http.get(url);
-    final String response = await rootBundle.loadString('response.json');
-    // final Map<String, dynamic> responseJson = jsonDecode(response.body);
-    final Map<String, dynamic> responseJson = jsonDecode(response);
+    final http.Response response = await http.get(url);
+    // final String response = await rootBundle.loadString('response.json');
+    final Map<String, dynamic> responseJson = jsonDecode(response.body);
+    // final Map<String, dynamic> responseJson = jsonDecode(response);
     final List<dynamic> rawTrains = TrainAPI._extractRawTrains(responseJson);
 
     return rawTrains.map<TrainRoute>(
@@ -43,7 +43,8 @@ class TrainAPI {
   static Future<List<Station>> fetchStations() async {
     final String response = await rootBundle.loadString('assets/stations.json');
     final Map<String, dynamic> responseJson = jsonDecode(response);
-
+    final List<dynamic> stationData = responseJson['Stations']['Station'];
+    return stationData.map<Station>((dynamic stationDto) => Station.fromDto(stationDto)).toList();
   }
 
 

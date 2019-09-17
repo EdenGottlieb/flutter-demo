@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import './src/api/index.dart';
-import './src/data/data_models.dart';
 import './src/components/route_card.dart';
+import './src/components/choose_station.dart';
+import './src/data/data_models.dart';
 
 void main() => runApp(MyApp());
 
@@ -27,27 +28,33 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-  List<TrainRoute> routes = <TrainRoute>[];
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+  _MyHomePageState() {
+    _updateStations();
   }
-
-  @override
-  Widget build(BuildContext context) {
-    TrainAPI.fetchRoutes(origin: '5200', destination: '3600').then((List<TrainRoute> result) {
+  void _updateRoutes() {
+    TrainAPI.fetchRoutes(origin: departureStation.id, destination: arrivalStation.id).then((List<TrainRoute> result) {
       setState(() {
         routes = result;
       });
     });
+  }
+  void _updateStations() {
+    TrainAPI.fetchStations().then((List<Station> fetchedStations) {
+      setState(() {
+        stations = fetchedStations;
+        departureStation = fetchedStations[0];
+        arrivalStation = fetchedStations[1];
+      });
+      _updateRoutes();
+    });
+  }
+  List<TrainRoute> routes = <TrainRoute>[];
+  List<Station> stations = <Station>[];
+  Station departureStation;
+  Station arrivalStation;
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -59,16 +66,35 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
+                ...(stations.isNotEmpty ? (
+                  <Widget>[
+                    StationPicker(
+                      stationsList: stations,
+                      selectedStation: departureStation,
+                      onStationPicked: (Station station) {
+                        setState(() {
+                          departureStation = station;
+                        });
+                        _updateRoutes();
+                      },
+                    ),
+                    StationPicker(
+                      stationsList: stations,
+                      selectedStation: arrivalStation,
+                      onStationPicked: (Station station) {
+                        setState(() {
+                          arrivalStation = station;
+                        });
+                        _updateRoutes();
+                      },
+                    )
+                  ]
+                ) : []),
                 ...routes.map<RouteCard>((TrainRoute route) => RouteCard(route: route,))
               ],
             ),
           )
         )
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
       ),
     );
   }

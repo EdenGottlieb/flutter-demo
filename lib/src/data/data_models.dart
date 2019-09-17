@@ -62,6 +62,11 @@ class Station {
     @required this.name
   });
 
-  final String id;
-  final String name;
+  Station.fromDto(dynamic dto) {
+    id = dto['StationId'];
+    name = dto['DescriptionHe'];
+  }
+
+  String id;
+  String name;
 }
