@@ -96,7 +96,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     )
                   ]
                 ) : const <Widget>[],
-                isFetching ? CupertinoActivityIndicator() : Container(),
+                if (isFetching) CupertinoActivityIndicator(),
                 ...routes.map<RouteCard>((TrainRoute route) => RouteCard(route: route,))
               ],
             ),
