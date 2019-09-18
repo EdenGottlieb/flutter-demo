@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import './src/api/index.dart';
 import './src/components/route_card.dart';
 import './src/components/station_picker.dart';
@@ -32,9 +33,13 @@ class _MyHomePageState extends State<MyHomePage> {
     _updateStations();
   }
   void _updateRoutes() {
+    setState(() {
+      isFetching = true;
+    });
     TrainAPI.fetchRoutes(origin: departureStation.id, destination: arrivalStation.id).then((List<TrainRoute> result) {
       setState(() {
-        routes = result;
+        isFetching = false;
+        routes = result.where((TrainRoute r) => r.trains.first.departure.isAfter(DateTime.now())).toList();
       });
     });
   }
@@ -52,6 +57,7 @@ class _MyHomePageState extends State<MyHomePage> {
   List<Station> stations = <Station>[];
   Station departureStation;
   Station arrivalStation;
+  bool isFetching = false;
 
   @override
   Widget build(BuildContext context) {
@@ -61,12 +67,12 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: SingleChildScrollView(
         child: Container (
-          margin: EdgeInsets.fromLTRB(0, 40, 0, 0),
+          margin: const EdgeInsets.fromLTRB(0, 40, 0, 0),
           child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                ...(stations.isNotEmpty ? (
+                ...stations.isNotEmpty ? (
                   <Widget>[
                     StationPicker(
                       stationsList: stations,
@@ -89,7 +95,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       },
                     )
                   ]
-                ) : []),
+                ) : const <Widget>[],
+                isFetching ? CupertinoActivityIndicator() : Container(),
                 ...routes.map<RouteCard>((TrainRoute route) => RouteCard(route: route,))
               ],
             ),
